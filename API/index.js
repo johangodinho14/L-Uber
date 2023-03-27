@@ -4,11 +4,13 @@ const http       = require('http');
 const bodyParser = require('body-parser');
 const mysqlUtils = require('./modules/mysqlUtils.js');
 // const requestUtils = require('./modules/requestUtils.js');
+const validation = require('./modules/validation.js');
 const bcrypt     = require('bcrypt');
 const JWT        = require('jsonwebtoken');
 const saltRounds = 12;
 
 require('dotenv').config({ override: true });
+const validator     = new validation.Validator();
 const mysqlRequests = new mysqlUtils.MysqlRequests();
 
 //Initialising server 
@@ -45,20 +47,27 @@ app.post("/registerUser", async(req,res) => {
     let firstLineAddress    = req.body.firstLineAddress;
     let city                = req.body.city;
     let postcode            = req.body.postcode;
-  
-    bcrypt.genSalt(saltRounds, function(err, salt) {
-        if(err){
-            res.sendStatus(500);
-        } else {
-            bcrypt.hash(password, salt, function(err, hash) {
-                if(err){
-                    res.sendStatus(500);
-                } else {
-                    mysqlRequests.uploadUserDetails(email,password,firstname,lastname,phoneNumber,firstLineAddress,city,postcode,hash,res);
-                }
-            });
-        }
-    });
+
+    let validationResult = validator.validateRegister(req);
+
+    //Validating user input
+    if(validationResult.valid === false){
+        res.send({"registerUser":"false","message":validationResult.message})
+    }else{
+        bcrypt.genSalt(saltRounds, function(err, salt) {
+            if(err){
+                res.sendStatus(500);
+            } else {
+                bcrypt.hash(password, salt, function(err, hash) {
+                    if(err){
+                        res.sendStatus(500);
+                    } else {
+                        mysqlRequests.uploadUserDetails(email,password,firstname,lastname,phoneNumber,firstLineAddress,city,postcode,hash,res);
+                    }
+                });
+            }
+        });
+    }
 });
 
 
@@ -66,30 +75,36 @@ app.post("/registerUser", async(req,res) => {
 app.post("/loginUser", async (req,res) => {
     let email = req.body.email;
     let userPassword = req.body.password;
+    let validationResult = validator.validateLogin(req);
 
-    mysqlRequests.checkUserDetails(email,res).then(function(results){
-        if(results.length <= 0){
-            res.send({"loginUser": false, "message": "Email or Password is incorrect."});
-        } else {
-            let hash = results[0].hash;
-            let userID = results[0].userID;
+    //Validating user input
+    if(validationResult.valid === false){
+        res.send({"loginUser":"false","message":validationResult.message});
+    }else{
+        mysqlRequests.checkUserDetails(email,res).then(function(results){
+            if(results.length <= 0){
+                res.send({"loginUser": false, "message": "Email or Password is incorrect."});
+            } else {
+                let hash = results[0].hash;
+                let userID = results[0].userID;
 
-            bcrypt.compare(userPassword, hash, function(err, result) {
-                if(err){
-                    res.sendStatus(500);
-                }
-                if(result === false){
-                    res.send({"loginUser": false, "message": "Email or Password is incorrect."});
-                }else{
-                    if(result === true){
-                        const token = JWT.sign({id: userID}, process.env.JWT_SECRET);
-                        res.send({"loginUser": true, "message": "You have successfully logged in.","token":token});
+                bcrypt.compare(userPassword, hash, function(err, result) {
+                    if(err){
+                        res.sendStatus(500);
                     }
-                }
-            });
-    }
-    })
+                    if(result === false){
+                        res.send({"loginUser": false, "message": "Email or Password is incorrect."});
+                    }else{
+                        if(result === true){
+                            const token = JWT.sign({id: userID}, process.env.JWT_SECRET);
+                            res.send({"loginUser": true, "message": "You have successfully logged in.","token":token});
+                        }
+                    }
+                });
+        }
+        })
         
+    }
 });
 
 
