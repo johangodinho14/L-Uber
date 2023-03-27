@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab&display=swap" rel="stylesheet">
+  <title>Luber - Dashboard</title>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Luber</div>
+    <div class="tab-menu">
+      <button class="tab-link" onclick="openTab(event, 'map')">Map</button>
+      <button class="tab-link" onclick="openTab(event, 'book-trip')">Book a Trip</button>
+      <button class="tab-link" onclick="openTab(event, 'previous-trips')">Previous Trips</button>
+      <button class="tab-link" onclick="openTab(event, 'promotions')">Promotions</button>
+    </div>
+
+    <div id="map" class="tab-content">
+      <h2>Map</h2>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d19859.1213486509!2d-0.39649280000000003!3d51.52440319999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2suk!4v1679661153477!5m2!1sen!2suk" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+
+    <div id="book-trip" class="tab-content" style="display: none;">
+        <h2>Book a Trip</h2>
+        <form id="booking-form">
+          <label for="pickup">Pickup:</label>
+          <input type="text" id="pickup" name="pickup" placeholder="Pickup address">
+          <br>
+          <label for="dropoff">Drop-off:</label>
+          <input type="text" id="dropoff" name="dropoff" placeholder="Drop-off address">
+          <br>
+          <button type="submit">Find Cars</button>
+        </form>
+        <br>
+        <table>
+          <thead>
+            <tr>
+              <th>Car Type</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic</td>
+              <td>$10</td>
+            </tr>
+            <tr>
+              <td>Standard</td>
+              <td>$15</td>
+            </tr>
+            <tr>
+              <td>Deluxe</td>
+              <td>$25</td>
+            </tr>
+            <tr>
+              <td>Luxury</td>
+              <td>$40</td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+
+<div id="previous-trips" class="tab-content" style="display: none;">
+    <h2>Previous Trips</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Pickup</th>
+          <th>Drop-off</th>
+          <th>Car Type</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2023-03-01</td>
+          <td>123 Main St</td>
+          <td>456 Market St</td>
+          <td>Standard</td>
+          <td>$15</td>
+        </tr>
+        <tr>
+          <td>2023-02-25</td>
+          <td>789 Park Ave</td>
+          <td>1011 Broadway</td>
+          <td>Basic</td>
+          <td>$10</td>
+        </tr>
+        <tr>
+          <td>2023-02-20</td>
+          <td>1213 Elm St</td>
+          <td>1415 Oak St</td>
+          <td>Deluxe</td>
+          <td>$25</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div id="dashboard-container">
+    <button id="logout-btn">Logout</button>
+  </div>
+
+  <div id="promotions" class="tab-content" style="display: none;">
+    <h2>Promotions</h2>
+    <div class="promo-card">
+      <h3>First Ride Free</h3>
+      <p>Get your first ride free up to $20 with the code <strong>FIRST20</strong>.</p>
+    </div>
+    <div class="promo-card">
+      <h3>10% Off Airport Rides</h3>
+      <p>Enjoy 10% off your next airport ride with the code <strong>AIRPORT10</strong>.</p>
+    </div>
+    <div class="promo-card">
+      <h3>Upgrade to Deluxe</h3>
+      <p>Upgrade to a Deluxe car for the price of a Standard car using the code <strong>DELUXEUP</strong>.</p>
+    </div>
+  </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
